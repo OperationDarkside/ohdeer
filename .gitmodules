@@ -1,0 +1,3 @@
+[submodule "extern/boing"]
+	path = extern/boing
+	url = https://github.com/OperationDarkside/boing.git
