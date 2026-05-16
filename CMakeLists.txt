@@ -11,13 +11,24 @@ add_compile_options(-std=c++26 -freflection -Wall -Wextra)
 
 set(CMAKE_BUILD_TYPE Debug)
 
+find_package(Boost REQUIRED COMPONENTS system thread url)
+
 add_library(boing INTERFACE)
 target_include_directories(boing INTERFACE 
-    ${CMAKE_CURRENT_SOURCE_DIR}/extern/boing
+    ${CMAKE_CURRENT_SOURCE_DIR}/boing
 )
 
 add_executable(ohdeer main.cpp)
 target_link_options(ohdeer PRIVATE -static-libstdc++ -static-libgcc)
+
+target_link_libraries(ohdeer 
+    PRIVATE 
+    Boost::system 
+    Boost::thread
+    Boost::url
+    Threads::Threads
+    boing
+)
 
 # Useful compiler warnings
 if(MSVC)
