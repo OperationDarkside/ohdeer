@@ -18,7 +18,12 @@ target_include_directories(boing INTERFACE
     ${CMAKE_CURRENT_SOURCE_DIR}/boing
 )
 
-add_executable(ohdeer main.cpp)
+add_executable(ohdeer main.cpp
+    ohdeer_session.cpp
+    component.cpp
+    main_view.cpp
+    button.cpp
+    label.cpp)
 target_link_options(ohdeer PRIVATE -static-libstdc++ -static-libgcc)
 
 target_link_libraries(ohdeer 
