@@ -6,7 +6,14 @@
 #include "boing/webserver.cpp"
 #include "boing/annotations.cpp"
 
+//#include "boing/extern/CppJsonMagic/json_magic.cpp"
+
 #include "ohdeer_session.cpp"
+
+struct event {
+    std::string event;
+    std::string target;
+};
 
 namespace endpoints
 {
@@ -46,7 +53,10 @@ namespace endpoints
 
         [[= POST("ui/event")]] static void ui_event(context<ohdeer_session> &ctx)
         {
-            
+            //std::cout << ctx.req << std::endl;
+            event e = json_magic::from_string<event>(ctx.req.body());
+            std::cout << "event: " << e.event << std::endl;
+            std::cout << "target: " << e.target << std::endl;
         }
 
         int visit_count = 0;

@@ -1,24 +1,109 @@
-<!doctype html>
-<html lang="en-US">
-
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width" />
-    <title>My test page</title>
+    <!-- Gemini 3.1 Pro -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>C++ UI Framework</title>
+    <style>
+        /* Basic styling to make the elements visible */
+        body { font-family: sans-serif; padding: 20px; }
+        #app-root { border: 1px solid #ccc; padding: 10px; min-height: 50px; }
+        button { cursor: pointer; padding: 5px 10px; }
+    </style>
 </head>
-
 <body>
-    <h1>My main title</h1>
-    <h2>My top level heading</h2>
-    <h3>My subheading</h3>
-    <h4>My sub-subheading</h4>
-    <p>This is a single paragraph</p>
 
-    <ul>
-        <li>technologists</li>
-        <li>thinkers</li>
-        <li>builders</li>
-    </ul>
+    <!-- This is the container where your C++ UI will be injected -->
+    <div id="app-root">Loading UI...</div>
+
+    <script>
+        // Configuration
+        const INIT_ENDPOINT = '/ui/init';
+        const EVENT_ENDPOINT = '/ui/event';
+
+        /**
+         * Main entry point. Fetches the JSON and starts the render process.
+         */
+        async function initializeUI() {
+            try {
+                // 1. Execute the GET request to your C++ server
+                const response = await fetch(INIT_ENDPOINT);
+
+                // 2. Check if the server responded successfully (HTTP 200)
+                if (!response.ok) {
+                    throw new Error(`Server returned status: ${response.status}`);
+                }
+
+                // 3. Parse the JSON response
+                const componentTree = await response.json();
+
+                // 4. Find the root container and clear the "Loading..." text
+                const appRoot = document.getElementById('app-root');
+                appRoot.innerHTML = ''; 
+
+                // 5. Generate the HTML elements and append them to the page
+                const domElement = createDOMElement(componentTree);
+                appRoot.appendChild(domElement);
+
+            } catch (error) {
+                console.error("Failed to load UI:", error);
+                document.getElementById('app-root').textContent = "Error connecting to server.";
+            }
+        }
+
+        /**
+         * Recursively transforms a JSON node into an actual HTML DOM element.
+         * @param {Object} node - The JSON object representing a component.
+         * @returns {HTMLElement} - The constructed HTML element.
+         */
+        function createDOMElement(node) {
+            // 1. Create the base HTML element (e.g., 'div', 'button', 'label')
+            const element = document.createElement(node.tag);
+
+            // 2. Apply the unique ID
+            if (node.id) {
+                element.id = node.id;
+            }
+
+            // 3. Apply text content if it exists
+            // Using !== undefined ensures empty strings are still applied
+            if (node.text !== undefined) {
+                element.textContent = node.text;
+                
+                // Note: Standard HTML uses <label> text </label>. 
+                // If you want a placeholder text for buttons, you might need to adjust this logic later.
+                if (node.tag === 'button' && element.textContent === '') {
+                     element.textContent = "Click Me"; // Fallback for testing
+                }
+            }
+
+            // 4. Attach event listeners
+            if (node.event) {
+                element.addEventListener(node.event,  (eventData) => {
+                    console.log(`Event triggered: ${node.event} on component ID: ${node.id}`);
+
+                    const response = fetch(EVENT_ENDPOINT, {
+                        method: "POST",
+                        body: JSON.stringify({event: node.event, target: node.id})
+                    });
+
+                });
+            }
+
+            // 5. Recursively process and append children
+            if (node.children && Array.isArray(node.children)) {
+                for (const childNode of node.children) {
+                    const childElement = createDOMElement(childNode);
+                    element.appendChild(childElement);
+                }
+            }
+
+            return element;
+        }
+
+        // Trigger the initialization function as soon as the HTML document is fully parsed
+        window.addEventListener('DOMContentLoaded', initializeUI);
+    </script>
 </body>
-
 </html>
