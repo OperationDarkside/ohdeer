@@ -1,26 +1,15 @@
 #include "component.cpp"
 
-struct label : public component
-{
-    std::string text{};
+struct label : public component {
+    label() : component{"label"} {}
 
-    label() : component{"label"}
-    {
-        
+    // Use a setter to keep the internal properties map synchronized
+    void setText(const std::string& new_text) {
+        properties["text"] = new_text;
     }
-
-    virtual std::string toJson() const override
-    {
-        std::string result{};
-        result += "{\"id\":\"";
-        result += id;
-        result += "\",\"tag\":\"";
-        result += tag;
-        result += "\",\"text\":\"";
-        result += text;
-        result += "\"}";
-
-        return result;
+    
+    std::string getText() const {
+        auto it = properties.find("text");
+        return (it != properties.end()) ? it->second : "";
     }
-
 };
