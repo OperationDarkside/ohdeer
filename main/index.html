@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <!-- Gemini 3.1 Pro -->
     <meta charset="UTF-8">
@@ -7,11 +8,24 @@
     <title>C++ UI Framework</title>
     <style>
         /* Basic styling to make the elements visible */
-        body { font-family: sans-serif; padding: 20px; }
-        #app-root { border: 1px solid #ccc; padding: 10px; min-height: 50px; }
-        button { cursor: pointer; padding: 5px 10px; }
+        body {
+            font-family: sans-serif;
+            padding: 20px;
+        }
+
+        #app-root {
+            border: 1px solid #ccc;
+            padding: 10px;
+            min-height: 50px;
+        }
+
+        button {
+            cursor: pointer;
+            padding: 5px 10px;
+        }
     </style>
 </head>
+
 <body>
 
     <!-- This is the container where your C++ UI will be injected -->
@@ -40,7 +54,7 @@
 
                 // 4. Find the root container and clear the "Loading..." text
                 const appRoot = document.getElementById('app-root');
-                appRoot.innerHTML = ''; 
+                appRoot.innerHTML = '';
 
                 // 5. Generate the HTML elements and append them to the page
                 const domElement = createDOMElement(componentTree);
@@ -70,24 +84,26 @@
             // Using !== undefined ensures empty strings are still applied
             if (node.text !== undefined) {
                 element.textContent = node.text;
-                
+
                 // Note: Standard HTML uses <label> text </label>. 
                 // If you want a placeholder text for buttons, you might need to adjust this logic later.
                 if (node.tag === 'button' && element.textContent === '') {
-                     element.textContent = "Click Me"; // Fallback for testing
+                    element.textContent = "Click Me"; // Fallback for testing
                 }
             }
 
             // 4. Attach event listeners
-            if (node.event) {
-                element.addEventListener(node.event,  (eventData) => {
-                    console.log(`Event triggered: ${node.event} on component ID: ${node.id}`);
+            if (node.events) {
+                node.events.forEach(event => {
+                    element.addEventListener(event, (eventData) => {
+                        console.log(`Event triggered: ${event} on component ID: ${node.id}`);
 
-                    const response = fetch(EVENT_ENDPOINT, {
-                        method: "POST",
-                        body: JSON.stringify({event: node.event, target: node.id})
+                        const response = fetch(EVENT_ENDPOINT, {
+                            method: "POST",
+                            body: JSON.stringify({ event: event, target: node.id })
+                        });
+
                     });
-
                 });
             }
 
@@ -106,4 +122,5 @@
         window.addEventListener('DOMContentLoaded', initializeUI);
     </script>
 </body>
+
 </html>
