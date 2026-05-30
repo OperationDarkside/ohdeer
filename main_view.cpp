@@ -13,7 +13,7 @@ struct main_view : public component {
         children.push_back(lbl);
 
         btn->set_text("Click me");
-        btn->addListener("click", [this](const std::string& input){
+        btn->addListener("click", [&](const std::string& input){
             lbl->setText(std::to_string(counter++));
         });
     }

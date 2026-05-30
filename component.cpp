@@ -8,7 +8,10 @@
 #include <functional>
 #include <sstream>
 
-class component {
+#include "event.cpp"
+
+class component
+{
 protected:
     std::map<std::string, std::string> properties{};
     std::vector<std::shared_ptr<component>> children{};
@@ -24,23 +27,28 @@ public:
     virtual ~component() = default;
 
     // Base implementation handles EVERYTHING automatically
-    std::string toJson() const {
+    std::string toJson() const
+    {
         std::ostringstream ss;
         ss << "{";
         ss << "\"id\":\"" << id << "\",";
         ss << "\"tag\":\"" << tag << "\"";
 
         // 1. Serialize all generic properties
-        for (const auto& [key, value] : properties) {
+        for (const auto &[key, value] : properties)
+        {
             ss << ",\"" << key << "\":\"" << value << "\"";
         }
 
         // 2. Serialize events if listeners exist
-        if (!listeners.empty()) {
+        if (!listeners.empty())
+        {
             ss << ",\"events\":[";
             bool first_event = true;
-            for (const auto& [event_name, _] : listeners) {
-                if (!first_event) ss << ",";
+            for (const auto &[event_name, _] : listeners)
+            {
+                if (!first_event)
+                    ss << ",";
                 ss << "\"" << event_name << "\"";
                 first_event = false;
             }
@@ -48,10 +56,13 @@ public:
         }
 
         // 3. Serialize children recursively
-        if (!children.empty()) {
+        if (!children.empty())
+        {
             ss << ",\"children\":[";
-            for (size_t i = 0; i < children.size(); ++i) {
-                if (i > 0) ss << ",";
+            for (size_t i = 0; i < children.size(); ++i)
+            {
+                if (i > 0)
+                    ss << ",";
                 ss << children[i]->toJson();
             }
             ss << "]";
@@ -61,13 +72,31 @@ public:
         return ss.str();
     }
 
-    void addListener(const std::string &eventType, std::function<void(const std::string &)> callback) {
+    void addListener(const std::string &eventType, std::function<void(const std::string &)> callback)
+    {
         listeners[eventType] = callback;
     }
 
-    void triggerEvent(const std::string &eventType, const std::string &payload) {
-        if (listeners.count(eventType)) {
-            listeners[eventType](payload);
+    void dispatch_event(const event_request &req)
+    {
+        if (this->id == req.target)
+        {
+            triggerEvent(req);
+        }
+        else if (!this->children.empty())
+        {
+            for (auto &&child : this->children)
+            {
+                child->dispatch_event(req);
+            }
+        }
+    }
+
+    void triggerEvent(const event_request &req)
+    {
+        if (listeners.count(req.event))
+        {
+            listeners[req.event](req.payload);
         }
     }
 };

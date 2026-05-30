@@ -49,6 +49,16 @@
                     throw new Error(`Server returned status: ${response.status}`);
                 }
 
+                setUI(response);
+
+            } catch (error) {
+                console.error("Failed to load UI:", error);
+                document.getElementById('app-root').textContent = "Error connecting to server.";
+            }
+        }
+
+        async function setUI(response) {
+            try {
                 // 3. Parse the JSON response
                 const componentTree = await response.json();
 
@@ -59,9 +69,8 @@
                 // 5. Generate the HTML elements and append them to the page
                 const domElement = createDOMElement(componentTree);
                 appRoot.appendChild(domElement);
-
             } catch (error) {
-                console.error("Failed to load UI:", error);
+                console.error("Failed to set UI:", error);
                 document.getElementById('app-root').textContent = "Error connecting to server.";
             }
         }
@@ -93,16 +102,17 @@
             }
 
             // 4. Attach event listeners
-            if (node.events) {
+            if (node.events && Array.isArray(node.events)) {
                 node.events.forEach(event => {
-                    element.addEventListener(event, (eventData) => {
+                    element.addEventListener(event, async (eventData) => {
                         console.log(`Event triggered: ${event} on component ID: ${node.id}`);
 
-                        const response = fetch(EVENT_ENDPOINT, {
+                        const response = await fetch(EVENT_ENDPOINT, {
                             method: "POST",
-                            body: JSON.stringify({ event: event, target: node.id })
+                            body: JSON.stringify({ event: event, target: node.id, payload: "dummy" })
                         });
 
+                        setUI(response);
                     });
                 });
             }

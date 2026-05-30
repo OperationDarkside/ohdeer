@@ -1,5 +1,6 @@
 #include <string>
 #include <chrono>
+#include <memory>
 
 #include "main_view.cpp"
 
@@ -14,5 +15,5 @@ struct ohdeer_session {
     // Lifecycle
     std::chrono::steady_clock::time_point last_active{};
 
-    main_view view{};
+    std::unique_ptr<main_view> view = std::make_unique<main_view>();
 };

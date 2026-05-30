@@ -23,7 +23,8 @@ add_executable(ohdeer main.cpp
     component.cpp
     main_view.cpp
     button.cpp
-    label.cpp)
+    label.cpp
+    event.cpp)
 target_link_options(ohdeer PRIVATE -static-libstdc++ -static-libgcc)
 
 target_link_libraries(ohdeer 

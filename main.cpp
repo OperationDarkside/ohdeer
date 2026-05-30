@@ -10,11 +10,6 @@
 
 #include "ohdeer_session.cpp"
 
-struct event {
-    std::string event;
-    std::string target;
-};
-
 namespace endpoints
 {
     using namespace boing;
@@ -48,15 +43,20 @@ namespace endpoints
 
         [[= GET("ui/init")]] static void ui_init(context<ohdeer_session> &ctx)
         {
-            ctx.json(ctx.session_->view.toJson());
+            ctx.json(ctx.session_->view->toJson());
         }
 
         [[= POST("ui/event")]] static void ui_event(context<ohdeer_session> &ctx)
         {
             //std::cout << ctx.req << std::endl;
-            event e = json_magic::from_string<event>(ctx.req.body());
+            event_request e = json_magic::from_string<event_request>(ctx.req.body());
             std::cout << "event: " << e.event << std::endl;
             std::cout << "target: " << e.target << std::endl;
+            std::cout << "payload: " << e.payload << std::endl;
+
+            ctx.session_->view->dispatch_event(e);
+
+            ctx.json(ctx.session_->view->toJson());
         }
 
         int visit_count = 0;
