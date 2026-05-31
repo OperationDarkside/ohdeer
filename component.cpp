@@ -8,12 +8,30 @@
 #include <functional>
 #include <sstream>
 
+#include "boing/extern/CppJsonMagic/json_magic.cpp"
 #include "event.cpp"
+
+struct kv
+{
+    std::string key{};
+    std::string value{};
+};
+
+struct component_dto
+{
+    std::string id{};
+    std::string tag{};
+    std::vector<kv> attributes{};
+    std::vector<kv> properties{};
+    std::vector<component_dto> children{};
+    std::vector<std::string> events{};
+};
 
 class component
 {
 protected:
     std::map<std::string, std::string> properties{};
+    std::map<std::string, std::string> attributes{};
     std::vector<std::shared_ptr<component>> children{};
     std::map<std::string, std::function<void(const std::string &)>> listeners{};
 
@@ -26,50 +44,46 @@ public:
 
     virtual ~component() = default;
 
-    // Base implementation handles EVERYTHING automatically
-    std::string toJson() const
+    component_dto to_dto () const
     {
-        std::ostringstream ss;
-        ss << "{";
-        ss << "\"id\":\"" << id << "\",";
-        ss << "\"tag\":\"" << tag << "\"";
+        // HTML attributes
+        std::vector<kv> attributes_dto{};
+        for (const auto &[key, value] : attributes)
+        {
+            attributes_dto.emplace_back(key, value);
+        }
 
-        // 1. Serialize all generic properties
+        // ohdeer properties
+        std::vector<kv> properties_dto{};
         for (const auto &[key, value] : properties)
         {
-            ss << ",\"" << key << "\":\"" << value << "\"";
+            properties_dto.emplace_back(key, value);
         }
 
-        // 2. Serialize events if listeners exist
+        std::vector<std::string> events{};
         if (!listeners.empty())
         {
-            ss << ",\"events\":[";
-            bool first_event = true;
             for (const auto &[event_name, _] : listeners)
             {
-                if (!first_event)
-                    ss << ",";
-                ss << "\"" << event_name << "\"";
-                first_event = false;
+                events.emplace_back(event_name);
             }
-            ss << "]";
         }
 
-        // 3. Serialize children recursively
+        std::vector<component_dto> children_dto{};
         if (!children.empty())
         {
-            ss << ",\"children\":[";
-            for (size_t i = 0; i < children.size(); ++i)
+            for (auto &child : children)
             {
-                if (i > 0)
-                    ss << ",";
-                ss << children[i]->toJson();
+                children_dto.emplace_back(child->to_dto());
             }
-            ss << "]";
         }
 
-        ss << "}";
-        return ss.str();
+        return component_dto{.id = id, .tag = tag, .attributes = attributes_dto, .properties = properties_dto, .children = children_dto, .events = events};
+    }
+
+    std::string toJson() const
+    {
+        return json_magic::to_string(to_dto());
     }
 
     void addListener(const std::string &eventType, std::function<void(const std::string &)> callback)

@@ -7,6 +7,6 @@ struct button : public component {
     }
 
     void set_text(const std::string_view text) {
-        this->properties["text"] = text;
+        this->properties["textContent"] = text;
     }
 };

@@ -5,11 +5,11 @@ struct label : public component {
 
     // Use a setter to keep the internal properties map synchronized
     void setText(const std::string& new_text) {
-        properties["text"] = new_text;
+        properties["textContent"] = new_text;
     }
     
     std::string getText() const {
-        auto it = properties.find("text");
+        auto it = properties.find("textContent");
         return (it != properties.end()) ? it->second : "";
     }
 };
