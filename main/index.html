@@ -23,6 +23,18 @@
             cursor: pointer;
             padding: 5px 10px;
         }
+
+        .vertical_layout {
+            display: grid;
+            grid-template-rows: auto;
+        }
+
+        .grid_layout {
+            display: grid;
+            gap: 10px;
+            grid-template-rows: auto;
+            grid-template-columns: auto;
+        }
     </style>
 </head>
 
@@ -64,8 +76,8 @@
             if (node.id) element.id = node.id;
 
             // Apply attributes (classes, styles, etc.) if provided by backend
-            if (node.attributes) {
-                Object.entries(node.attributes).forEach(([key, value]) => element.setAttribute(key, value));
+            if (node.attributes && Array.isArray(node.attributes) && node.attributes.length > 0) {
+                node.attributes.forEach(a => element.setAttribute(a.key, a.value));
             }
 
             // custom ohdeer properties

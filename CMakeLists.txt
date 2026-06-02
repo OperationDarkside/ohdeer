@@ -24,7 +24,10 @@ add_executable(ohdeer main.cpp
     main_view.cpp
     button.cpp
     label.cpp
-    event.cpp)
+    event.cpp
+    vertical_layout.cpp
+    grid_layout.cpp
+    grid_layout_item.cpp)
 target_link_options(ohdeer PRIVATE -static-libstdc++ -static-libgcc)
 
 target_link_libraries(ohdeer 
