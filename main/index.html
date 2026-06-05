@@ -8,20 +8,89 @@
     <title>C++ UI Framework</title>
     <style>
         /* Basic styling to make the elements visible */
+        html,
         body {
             font-family: sans-serif;
-            padding: 20px;
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            padding: 0;
         }
 
         #app-root {
-            border: 1px solid #ccc;
-            padding: 10px;
+            height: 100%;
+            width: 100%;
             min-height: 50px;
+        }
+
+        .app-layout {
+            height: 100%;
+            width: 100%;
+
+            display: grid;
+            grid-template-columns: 3vw auto 3vw;
+            grid-template-rows: 3vw auto;
+        }
+
+        .burger {
+            font-size: x-large;
+            line-height: 3vw;
+            text-align: center;
+
+            background-color: aqua;
+
+            cursor: pointer;
+
+            grid-column: 1;
+            grid-row: 1;
+        }
+
+        .headline {
+            font-size: x-large;
+            text-align: center;
+            line-height: 3vw;
+
+            background-color: darkorange;
+
+            grid-column: 2;
+            grid-row: 1;
+        }
+
+        .settings {
+            font-size: x-large;
+            line-height: 3vw;
+            text-align: center;
+
+            background-color: chartreuse;
+
+            cursor: pointer;
+
+            grid-column: 3;
+            grid-row: 1;
+        }
+
+        .menu {
+            background-color: pink;
+
+            grid-column: 1;
+            grid-row: 2;
+        }
+
+        .app-content {
+            grid-column: 2 / 3;
+            grid-row: 2;
         }
 
         button {
             cursor: pointer;
             padding: 5px 10px;
+
+            border-radius: 0px;
+            border: 0;
+        }
+
+        label {
+            padding: 3px;
         }
 
         .vertical_layout {
@@ -34,6 +103,14 @@
             gap: 10px;
             grid-template-rows: auto;
             grid-template-columns: auto;
+
+            padding: 10px;
+
+            background-color: #eeeeee;
+        }
+
+        .grid_layout>div {
+            background-color: #cfcfcf;
         }
     </style>
 </head>
@@ -41,7 +118,27 @@
 <body>
 
     <!-- This is the container where your C++ UI will be injected -->
-    <div id="app-root">Loading UI...</div>
+    <div id="app-root">
+        <!--
+        <div id="app-layout">
+            <div id="burger">
+                ≡
+            </div>
+            <div id="headline">
+                My First App
+            </div>
+            <div id="settings">
+                ⚙
+            </div>
+            <div id="menu">
+
+            </div>
+            <div id="app-content">
+                Loading content...
+            </div>
+        </div>
+        -->
+    </div>
 
     <script>
         const INIT_ENDPOINT = '/ui/init';
@@ -83,7 +180,7 @@
             // custom ohdeer properties
             if (node.properties && Array.isArray(node.properties)) {
                 node.properties.forEach(p => {
-                    if(p.key === "textContent") {
+                    if (p.key === "textContent") {
                         element.appendChild(document.createTextNode(p.value));
                     }
                 });

@@ -27,7 +27,8 @@ add_executable(ohdeer main.cpp
     event.cpp
     vertical_layout.cpp
     grid_layout.cpp
-    grid_layout_item.cpp)
+    grid_layout_item.cpp
+    app_layout.cpp)
 target_link_options(ohdeer PRIVATE -static-libstdc++ -static-libgcc)
 
 target_link_libraries(ohdeer 

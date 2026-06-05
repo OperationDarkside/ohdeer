@@ -43,7 +43,7 @@ namespace endpoints
 
         [[= GET("ui/init")]] static void ui_init(context<ohdeer_session> &ctx)
         {
-            ctx.json(ctx.session_->view->toJson());
+            ctx.json(ctx.session_->view->get_app()->toJson());
         }
 
         [[= POST("ui/event")]] static void ui_event(context<ohdeer_session> &ctx)
@@ -54,9 +54,9 @@ namespace endpoints
             std::cout << "target: " << e.target << std::endl;
             std::cout << "payload: " << e.payload << std::endl;
 
-            ctx.session_->view->dispatch_event(e);
+            ctx.session_->view->get_app()->dispatch_event(e);
 
-            ctx.json(ctx.session_->view->toJson());
+            ctx.json(ctx.session_->view->get_app()->toJson());
         }
 
         int visit_count = 0;

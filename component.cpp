@@ -29,15 +29,14 @@ struct component_dto
 
 class component
 {
-protected:
-    std::map<std::string, std::string> properties{};
-    std::map<std::string, std::string> attributes{};
-    std::vector<std::shared_ptr<component>> children{};
-    std::map<std::string, std::function<void(const std::string &)>> listeners{};
 
 public:
     std::string id{};
     std::string tag{};
+    std::map<std::string, std::string> properties{};
+    std::map<std::string, std::string> attributes{};
+    std::vector<std::shared_ptr<component>> children{};
+    std::map<std::string, std::function<void(const std::string &)>> listeners{};
 
     explicit component(std::string tg, std::string _id = std::to_string(rand()))
         : id{std::move(_id)}, tag{std::move(tg)} {}

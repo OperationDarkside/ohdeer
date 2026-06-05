@@ -4,9 +4,13 @@
 #include "label.cpp"
 #include "vertical_layout.cpp"
 #include "grid_layout.cpp"
+#include "app_layout.cpp"
 
-struct main_view : public component {
+struct main_view
+{
     int counter{};
+    std::shared_ptr<app_layout> app = std::make_shared<app_layout>();
+    std::shared_ptr<vertical_layout> main_vl = std::make_shared<vertical_layout>();
     std::shared_ptr<button> btn = std::make_shared<button>();
     std::shared_ptr<label> lbl = std::make_shared<label>();
     std::shared_ptr<label> lbl1 = std::make_shared<label>();
@@ -19,22 +23,21 @@ struct main_view : public component {
     std::shared_ptr<label> lbl5 = std::make_shared<label>();
     std::shared_ptr<label> lbl6 = std::make_shared<label>();
 
-
-    main_view() : component{"div"} {
-        children.push_back(btn);
-        children.push_back(lbl);
+    main_view()
+    {
+        main_vl->children.push_back(btn);
+        main_vl->children.push_back(lbl);
 
         btn->set_text("Click me");
-        btn->addListener("click", [&](const std::string& input){
-            lbl->setText(std::to_string(counter++));
-        });
+        btn->addListener("click", [&](const std::string &input)
+                         { lbl->setText(std::to_string(counter++)); });
 
         // VERTICAL LAYOUT
         lbl1->setText("Text1");
         lbl2->setText("Text2");
         vl->add_component(lbl1);
         vl->add_component(lbl2);
-        children.push_back(vl);
+        main_vl->children.push_back(vl);
 
         // GRID LAYOUT
         lbl3->setText("Text3");
@@ -45,6 +48,12 @@ struct main_view : public component {
         gl->add_component(2, 1, lbl4);
         gl->add_component(1, 2, lbl5);
         gl->add_component(2, 3, lbl6);
-        children.push_back(gl);
+        main_vl->children.push_back(gl);
+
+        app->set_content(main_vl);
+    }
+
+    auto& get_app() {
+        return app;
     }
 };
