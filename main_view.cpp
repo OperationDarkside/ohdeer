@@ -25,6 +25,7 @@ struct main_view
 
     main_view()
     {
+        /*
         main_vl->children.push_back(btn);
         main_vl->children.push_back(lbl);
 
@@ -49,11 +50,23 @@ struct main_view
         gl->add_component(1, 2, lbl5);
         gl->add_component(2, 3, lbl6);
         main_vl->children.push_back(gl);
+        */
+        app->set_headline("Hello Log");
+        app->add_menu_item("Log", "log", []()
+                           {
+            std::shared_ptr<label> lbl_bla = std::make_shared<label>();
+            lbl_bla->setText("Hello");
+            return lbl_bla; });
 
-        app->set_content(main_vl);
+        app->add_menu_item("Dashboard", "dashboard", []()
+                           {
+            std::shared_ptr<label> lbl_bla = std::make_shared<label>();
+            lbl_bla->setText("A Dashing Board");
+            return lbl_bla; });
     }
 
-    auto& get_app() {
+    auto &get_app()
+    {
         return app;
     }
 };
